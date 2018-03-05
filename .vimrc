@@ -93,6 +93,9 @@ Plugin 'jmcantrell/vim-virtualenv'
 " [13] simple template machine: Type :Stencil <tab> in vim-console
 Plugin 'mrtazz/vim-stencil'
 
+" [14] solarized colorscheme
+Plugin 'altercation/vim-colors-solarized'
+
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -129,6 +132,10 @@ endif
 " Javascript or CSS
 autocmd FileType java nnoremap <silent> <Leader>; :call cosco#commaOrSemiColon()<CR>
 autocmd FileType java inoremap <silent> <Leader>; <c-o>:call cosco#commaOrSemiColon()<CR>
+"autocmd FileType cpp nnoremap <silent> <Leader>; :call cosco#commaOrSemiColon()<CR>
+"autocmd FileType cpp inoremap <silent> <Leader>; <c-o>:call cosco#commaOrSemiColon()<CR>
+autocmd FileType cpp nnoremap <silent> <Leader>. :call cosco#commaOrSemiColon()<CR>
+autocmd FileType cpp inoremap <silent> <Leader>. <c-o>:call cosco#commaOrSemiColon()<CR>
 
 " [9]
 " Set ultisnips triggers
@@ -177,9 +184,35 @@ let g:virtualenv_directory = '/home/alkk/tutorials'
 " [13] templates load
 let g:StencilTemplatepath = "~/.vim/templates/"
 
+" [14] solarized colorscheme
+"syntax enable
+"set background=dark
+"colorscheme solarized
+"let g:solarized_termcolors=256
+"g:solarized_termcolors= 16 | 256
+"g:solarized_termtrans = 0 " | 1
+"g:solarized_degrade = 0 " | 1
+"g:solarized_bold = 1 " | 0
+"g:solarized_underline = 1 " | 0
+"g:solarized_italic = 1 " | 0
+"g:solarized_contrast = “normal”
+"g:solarized_visibility= “normal”
+
+" colorscheme
+colorscheme delek_mine
+
 " Enable folding
 set foldmethod=indent
 set foldlevel=99
+
+" set relative number on InsertMode
+" and absolute numbers in nOrmalMode
+" set number
+autocmd InsertLeave * : set norelativenumber
+autocmd InsertEnter * : set relativenumber
+
+"autocmd InsertLeave * : set relativenumber
+"autocmd InsertEnter * : set norelativenumber
 
 "set relativenumber " set relative numbers
 "au FocusLost * :set number
@@ -226,6 +259,16 @@ au BufRead,BufNewFile *.c,*.h match BadWhitespace /\s\+$/
 au         BufNewFile *.c,*.h set fileformat=unix
 au BufRead,BufNewFile *.c,*.h let b:comment_leader = '/* '
 
+" CPP
+au BufRead,BufNewFile *.cpp,*.h set expandtab
+au BufRead,BufNewFile *.cpp,*.h set tabstop=4
+au BufRead,BufNewFile *.cpp,*.h set shiftwidth=4
+au BufRead,BufNewFile *.cpp,*.h set autoindent
+au BufRead,BufNewFile *.cpp,*.h match BadWhitespace /^\t\+/
+au BufRead,BufNewFile *.cpp,*.h match BadWhitespace /\s\+$/
+au         BufNewFile *.cpp,*.h set fileformat=unix
+au BufRead,BufNewFile *.cpp,*.h let b:comment_leader = '/* '
+
 " HTML
 au BufRead,BufNewFile *.html set filetype=xml
 au BufRead,BufNewFile *.html set expandtab
@@ -255,26 +298,44 @@ set noswapfile
 set nobackup
 set nowritebackup
 
+" compile shortcuts
+" https://stackoverflow.com/questions/18296192/vim-compile-and-run-shortcut
+autocmd filetype python nnoremap <F8> :w <bar> exec '!python3.5 '.shellescape('%')<CR>
+autocmd filetype c nnoremap <F8> :w <bar> exec '!gcc '.shellescape('%').' -o '.shellescape('%:r').' && echo Compilation complete && ./'.shellescape('%:r')<CR>
+" standard compile
+"autocmd filetype cpp nnoremap <F8> :w <bar> exec '!g++ '.shellescape('%').' -o '.shellescape('%:r').' && echo Compilation complete && ./'.shellescape('%:r')<CR>
+
+" compile for the book: Bjarne Stroustrup - Programming Principles and
+" Practice Using C++.pdf
+" C++11
+autocmd filetype cpp nnoremap <F8> :w <bar> exec '!clear;g++ -std=c++11 -o '.shellescape('%:r').' '.shellescape('%').' && echo Compilation complete && ./'.shellescape('%:r')<CR>
+
+" compilte for debugging and run
+" compilre and run ddd
+autocmd filetype cpp nnoremap <F10> :w <bar> exec '!clear;g++ -std=c++11 -g -o '.shellescape('%:r').' '.shellescape('%').' && echo Compilation complete && ddd '.shellescape('%:r')<CR>
+" compile and run gdb
+autocmd filetype cpp nnoremap <F10> :w <bar> exec '!clear;g++ -std=c++11 -g -o '.shellescape('%:r').' '.shellescape('%').' && echo Compilation complete && gdb '.shellescape('%:r')<CR>
 
 " Python Edit
-" nnoremap <silent> <F12> :!clear;python3.5 %<CR>
-nnoremap <silent> <F8> :w\|!clear;python3.5 %<CR>
+"nnoremap <silent> <F8> :w\|!clear;python3.5 %<
 nnoremap <silent> <F7> :w\|!clear;python3.5 -i %<CR>
-" nnoremap <silent> <F9> :w\|!ipython3 %<CR>
 nnoremap <silent> <F6> :w\|!ipython3 -i  %<CR>
 " nnoremap <silent> <F6> :w\|!ipdb3 %<CR>
 nnoremap <silent> <F5> :w\|!pudb3 %<CR>
 
+
 " Java Edit
-autocmd Filetype java set makeprg=javac\ %
-set errorformat=%A%f:%l:\ %m,%-Z%p^,%-C%.%#
-map <F10> :Java<Return>
-map <F12> :Java %<Return>
+"autocmd Filetype java set makeprg=javac\ %
+"set errorformat=%A%f:%l:\ %m,%-Z%p^,%-C%.%#
+"map <F10> :Java<Return>
+"map <F12> :Java %<Return>
 
 " remaping ESC-Keys
 imap jj <Esc>
 cmap ff <Esc>
+nnoremap q }
 
+" del empty space at the end of line
 map <F9> :%s/\s\+$//<Return>
 
 " split navigations
@@ -287,16 +348,20 @@ nnoremap <C-H> <C-W><C-H>
 " if passing text from another applications/clipboard
 set pastetoggle=<F4>
 
-" Insert newline without entering insert mode
-nmap <CR> o<Esc>
+" Insert newline without entering insert mode with Enter
+nnoremap <CR> o<Esc>
+
+" Insert newline above curren line with Backspace
+nnoremap <BS> O<Esc>
 
 " remember position when reopening file
 if has("autocmd")
   au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 endif
 
-" colorscheme
-colorscheme delek_mine
+" jump back/forward - shortcuts:
+" ctrl + o
+" ctrl + i
 
 " Configuring the cursor
 if &term =~ "xterm\\|rxvt"

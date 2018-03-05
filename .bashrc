@@ -117,6 +117,8 @@ alias p='/usr/bin/python3.5'
 alias pm='/usr/bin/python3.5 manage.py'
 alias pmm='/usr/bin/python3.5 manage.py migrate'
 alias pmmi='/usr/bin/python3.5 manage.py makemigrations'
+alias startSSHarchLinux='ssh alkk@192.168.0.13 -i "/home/alkk/.ssh/leno_rsa"'
+alias cdd='cd ..'
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
